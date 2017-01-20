@@ -20,4 +20,5 @@ RUN wget https://github.com/mothur/mothur/releases/download/v1.38.1/Mothur.linux
 
 #adds to the path
 ENV PATH /mothur:$PATH
+ENV TERM dumb
 
