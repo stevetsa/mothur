@@ -1,0 +1,223 @@
+{
+  "hints": [
+    {
+      "dockerPull": "stevetsa/mothur:1.38.1",
+      "class": "DockerRequirement",
+      "dockerImageId": ""
+    },
+    {
+      "class": "sbg:AWSInstanceType",
+      "value": "c4.2xlarge"
+    },
+    {
+      "class": "sbg:CPURequirement",
+      "value": {
+        "engine": "#cwl-js-engine",
+        "class": "Expression",
+        "script": "1"
+      }
+    },
+    {
+      "class": "sbg:MemRequirement",
+      "value": 1000
+    }
+  ],
+  "label": "mothur_make_contigs",
+  "sbg:validationErrors": [],
+  "requirements": [
+    {
+      "id": "#cwl-js-engine",
+      "requirements": [
+        {
+          "dockerPull": "rabix/js-engine",
+          "class": "DockerRequirement"
+        }
+      ],
+      "class": "ExpressionEngineRequirement"
+    },
+    {
+      "class": "CreateFileRequirement",
+      "fileDef": [
+        {
+          "filename": "script.sh",
+          "fileContent": "export TERM=linux\necho $TERM\necho `pwd`\nexport TERM=linux\n\nmothur \"#make.contigs(file=all.files, processors=8)\"\nmothur \"#summary.seqs(fasta=all.trim.contigs.fasta)\"\nmothur \"#align.seqs(fasta=all.trim.contigs.fasta, template=silva.bacteria.fasta, processors=8)\"\nmothur \"#summary.seqs(fasta=all.trim.contigs.align)\nmothur \"#screen.seqs(fasta=all.trim.contigs.fasta, group=all.contigs.groups, maxambig=0, maxhomop=6, optimize=start-end-minlength)\"\nmothur \"#filter.seqs(fasta=all.trim.contigs.good.align, processors=8)\"\nmothur \"#classify.seqs(fasta=all.trim.contigs.good.filter.fasta, name=current, template=silva.bacteria.fasta, taxonomy=silva.bacteria.gg.tax, processor=8)\"\nmothur \"#summary.seqs(fasta=all.trim.contigs.good.fasta)\"\necho \"done!\""
+        }
+      ]
+    }
+  ],
+  "sbg:id": "tsang/test-microbiome/mothur/2",
+  "successCodes": [],
+  "sbg:contributors": [
+    "tsang"
+  ],
+  "sbg:latestRevision": 2,
+  "id": "https://cgc-api.sbgenomics.com/v2/apps/tsang/test-microbiome/mothur/2/raw/",
+  "class": "CommandLineTool",
+  "sbg:modifiedOn": 1485182795,
+  "sbg:sbgMaintained": false,
+  "arguments": [],
+  "sbg:revision": 2,
+  "sbg:image_url": null,
+  "temporaryFailCodes": [],
+  "inputs": [
+    {
+      "type": [
+        "null",
+        "File"
+      ],
+      "sbg:stageInput": "copy",
+      "id": "#fastqZIP",
+      "sbg:fileTypes": "ZIP"
+    },
+    {
+      "type": [
+        "null",
+        "File"
+      ],
+      "sbg:stageInput": "copy",
+      "id": "#TrainingSet",
+      "sbg:fileTypes": "PDS.ZIP"
+    },
+    {
+      "sbg:toolDefaultValue": "ZIP",
+      "type": [
+        "null",
+        "File"
+      ],
+      "sbg:stageInput": "copy",
+      "id": "#SILVA",
+      "sbg:fileTypes": "ZIP"
+    }
+  ],
+  "sbg:modifiedBy": "tsang",
+  "sbg:job": {
+    "inputs": {
+      "SILVA": {
+        "size": 0,
+        "path": "/sbgenomics/Projects/3778c57d-de64-4116-b086-477500569cb5/bbd10109-a47b-49ab-bec1-b1f5bf372ad7/mothur-make-contigs/0_Silva_bacteria.zip",
+        "secondaryFiles": [],
+        "class": "File"
+      },
+      "TrainingSet": {
+        "size": 0,
+        "path": "/path/to/TrainingSet.ext",
+        "secondaryFiles": [],
+        "class": "File"
+      },
+      "fastqZIP": {
+        "size": 0,
+        "path": "/path/to/fastqZIP.ext",
+        "secondaryFiles": [],
+        "class": "File"
+      }
+    },
+    "allocatedResources": {
+      "mem": 1000,
+      "cpu": 1
+    }
+  },
+  "sbg:revisionsInfo": [
+    {
+      "sbg:modifiedBy": "tsang",
+      "sbg:revision": 0,
+      "sbg:modifiedOn": 1484923580,
+      "sbg:revisionNotes": "Copy of tsang/rtb-microbiome/mothur/0"
+    },
+    {
+      "sbg:modifiedBy": "tsang",
+      "sbg:revision": 1,
+      "sbg:modifiedOn": 1485180500,
+      "sbg:revisionNotes": null
+    },
+    {
+      "sbg:modifiedBy": "tsang",
+      "sbg:revision": 2,
+      "sbg:modifiedOn": 1485182795,
+      "sbg:revisionNotes": null
+    }
+  ],
+  "description": "",
+  "stdout": "stdoutput2.txt",
+  "sbg:createdBy": "tsang",
+  "sbg:cmdPreview": "unzip -j fastqZIP.ext >> stdoutput.txt && unzip -j TrainingSet.ext >> stdoutput.txt && unzip -j 0_Silva_bacteria.zip >> stdoutput.txt && chmod 777 script.sh && ./script.sh >> stdoutput.txt  > stdoutput2.txt",
+  "sbg:createdOn": 1484923580,
+  "sbg:project": "tsang/test-microbiome",
+  "baseCommand": [
+    "unzip",
+    "-j",
+    {
+      "engine": "#cwl-js-engine",
+      "class": "Expression",
+      "script": "$job.inputs.fastqZIP.path.split(\"/\").pop()"
+    },
+    ">>",
+    "stdoutput.txt",
+    "&&",
+    "unzip",
+    "-j",
+    {
+      "engine": "#cwl-js-engine",
+      "class": "Expression",
+      "script": "$job.inputs.TrainingSet.path.split(\"/\").pop()"
+    },
+    ">>",
+    "stdoutput.txt",
+    "&&",
+    "unzip",
+    "-j",
+    {
+      "engine": "#cwl-js-engine",
+      "class": "Expression",
+      "script": "$job.inputs.SILVA.path.split(\"/\").pop()"
+    },
+    ">>",
+    "stdoutput.txt",
+    "&&",
+    "chmod",
+    "777",
+    "script.sh",
+    "&&",
+    "./script.sh",
+    ">>",
+    "stdoutput.txt"
+  ],
+  "outputs": [
+    {
+      "type": [
+        "null",
+        {
+          "name": "outputfiles",
+          "type": "array",
+          "items": "File"
+        }
+      ],
+      "outputBinding": {
+        "glob": "stability*"
+      },
+      "id": "#outputfiles"
+    },
+    {
+      "type": [
+        "null",
+        "File"
+      ],
+      "outputBinding": {
+        "glob": "stdoutput.txt"
+      },
+      "id": "#stdoutput",
+      "sbg:fileTypes": "TXT"
+    },
+    {
+      "type": [
+        "null",
+        "File"
+      ],
+      "outputBinding": {
+        "glob": "stdoutput2.txt"
+      },
+      "id": "#stdoutput2",
+      "sbg:fileTypes": "TXT"
+    }
+  ],
+  "stdin": ""
+}
